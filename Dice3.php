@@ -1,5 +1,18 @@
 <?php
 
+require_once("db_const.php");
+
+$mysqli = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
+
+if ($mysqli->connect_errno) {
+    echo "<p>MySQL error no ($mysqli->connect_errno) : ($mysqli->connect_error)</p>";
+    exit();
+}
+else {
+    echo "<p>Connection okay</p>";
+}
+
+
 if (isset($_GET['hello'])) {
     throwDobbelsteen();
 }
@@ -70,16 +83,18 @@ function throwDobbelsteen()
     rsort($aScore);
     print_r($aScore);
 
+    $bscore = "";
+
     if($aScore[0] == 2)
     {
 
         if($aScore[1] == 2)
         {
-            ?><fieldset><div style="font-size: 2em;"><?php echo "you got Two Pair"; ?></div></fieldset><?php
+            ?><fieldset><div style="font-size: 2em;"><?php echo "you got Two Pair"; $bscore = "Two pair";?></div></fieldset><?php
         }
         else
         {
-            ?><fieldset><div style="font-size: 2em;"><?php echo "you got One Pair"; ?></div></fieldset><?php
+            ?><fieldset><div style="font-size: 2em;"><?php echo "you got One Pair"; $bscore = "One pair";?></div></fieldset><?php
         }
     }
 
@@ -87,33 +102,50 @@ function throwDobbelsteen()
     {
         if($aScore[1] == 2)
         {
-            ?><fieldset><div style="font-size: 2em;"><?php echo "you got a Full House"; ?></div></fieldset><?php
+            ?><fieldset><div style="font-size: 2em;"><?php echo "you got a Full House"; $bscore = "Full house";?></div></fieldset><?php
         }
         else
         {
-            ?><fieldset><div style="font-size: 2em;"><?php echo "you got Three of a Kind"; ?></div></fieldset><?php
+            ?><fieldset><div style="font-size: 2em;"><?php echo "you got Three of a Kind"; $bscore = "Three of a kind";?></div></fieldset><?php
         }
     }
 
     if($aScore[0] == 4)
     {
-        ?><fieldset><div style="font-size: 2em;"><?php echo "you got Carre"; ?></div></fieldset><?php
+        ?><fieldset><div style="font-size: 2em;"><?php echo "you got Carre"; $bscore = "Carre";?></div></fieldset><?php
     }
 
     if($aScore[0] == 5)
     {
-        ?><fieldset><div style="font-size: 2em;"><?php echo "you got Poker"; ?></div></fieldset><?php
+        ?><fieldset><div style="font-size: 2em;"><?php echo "you got Poker"; $bscore = "Poker";?></div></fieldset><?php
     }
 
     if($aScore[0] == 1 AND $aScore[1] == 1 AND $aScore[2] == 1 AND $aScore[3] == 1 AND $aScore[4] == 1)
     {
-        ?><fieldset><div style="font-size: 2em;"><?php echo "you got a Straight Flush"; ?></div></fieldset><?php
+        ?><fieldset><div style="font-size: 2em;"><?php echo "you got a Straight Flush"; $bscore = "Full house";?></div></fieldset><?php
     }
 
     /*if($aScore[0] == 1 AND $aScore[1] == 1 AND $aScore[2] == 1 AND $aScore[3] == 1 AND $aScore[4] == 1 AND $aScore[5] == 0)
     {
         ?><fieldset><div style="font-size: 2em;"><?php echo "you got a Royal Straight Flush"; ?></div></fieldset><?php
     }*/
+
+    $mysqli = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
+
+    $bWorp = implode($aWorp);
+    $userID = "4";
+    $sql = "INSERT INTO dobbel_scores (User_ID , Worp , Score) VALUES ('$userID' , '$bWorp' , '$bscore')";
+
+    $Dump = $mysqli->query("SELECT * FROM dobbel_scores");
+    var_dump($Dump);
+
+    if($mysqli -> query($sql) === TRUE) {
+        echo "<br>update succesvol</br>";
+        echo $sql;
+    }else{
+        echo "<br>Error: " . $sql . "<br>" . $mysqli->error;
+    }
+    $mysqli -> close();
 }
 
 function analyseWorp($aWorp)
