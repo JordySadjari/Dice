@@ -12,6 +12,16 @@ else {
     echo "<p>Connection okay</p>";
 }
 
+?>
+
+<html>
+
+<br>
+<a href="Dice3.php?hello=true" style="text-decoration: none; color: white; background-color: black; padding: 3px 3px 3px 3px; margin-left: 40px;">Throw</a>
+</html>
+<br>
+<br>
+<?php
 
 if (isset($_GET['hello'])) {
     throwDobbelsteen();
@@ -130,14 +140,21 @@ function throwDobbelsteen()
         ?><fieldset><div style="font-size: 2em;"><?php echo "you got a Royal Straight Flush"; ?></div></fieldset><?php
     }*/
 
+
     $mysqli = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
     $bWorp = implode($aWorp);
     $userID = "4";
     $sql = "INSERT INTO dobbel_scores (User_ID , Worp , Score) VALUES ('$userID' , '$bWorp' , '$bscore')";
 
-    $Dump = $mysqli->query("SELECT * FROM dobbel_scores");
-    var_dump($Dump);
+    $result = $mysqli->query("SELECT * FROM dobbel_scores");
+
+    if (mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            echo "User_ID: " . $row["User_ID"]. " worp <br>" . $row["Worp"]. " Score <br>" . $row["Score"]. " PK " . $row["PK"] . "<br>";
+            echo "<br>";
+        }
+    }
 
     if($mysqli -> query($sql) === TRUE) {
         echo "<br>update succesvol</br>";
@@ -163,8 +180,4 @@ function analyseWorp($aWorp)
 
 ?>
 
-<html>
-<br>
-<br>
-    <a href="Dice3.php?hello=true" style="text-decoration: none; color: white; background-color: black; padding: 3px 3px 3px 3px; margin-left: 40px;">Throw</a>
-</html>
+
